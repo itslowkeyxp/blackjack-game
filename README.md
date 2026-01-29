@@ -6,20 +6,6 @@ Play here : https://blackjack-iota-blue.vercel.app/
 
 A high-stakes, premium Blackjack experience built with React, Tailwind CSS. This application offers a professional casino-grade simulation with smooth animations, realistic sound effects, and intelligent strategic advice.
 
-## ✨ Features
-
-- **Professional Rules**: 
-  - Blackjack pays 3:2.
-  - Dealer stands on 17.
-  - Support for Splitting pairs and Doubling Down.
-- **AI Strategic Advisor**: Powered by **Gemini 3 Flash**, get real-time basic strategy advice based on your current hand and the dealer's up-card.
-- **Career Stats**: Persistent tracking of your wins, losses, win rate, net profit, and lifetime highest balance via `localStorage`.
-- **Immersive UI**: 
-  - Realistic 3D card flip animations.
-  - Dynamic bet stacks that visually grow as you wager.
-  - Haptic-inspired sound effects for chips and card dealing.
-- **Responsive Design**: Fully optimized for mobile, tablet, and desktop play.
-
 ## 🛠 Tech Stack
 
 - **Frontend**: React (ESM)
