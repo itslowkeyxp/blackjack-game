@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Blackjack Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'felt-green': '#0f4d19',
+              'felt-dark': '#0a3311',
+              'gold-500': '#d4af37',
+              'gold-600': '#b4941f',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+      }
+
+      .card-is-hidden {
+        transform: rotateY(180deg);
+      }
+
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 0.75rem;
+      }
+
+      .card-face-back {
+        transform: rotateY(180deg);
+      }
+
+      .card-enter {
+        animation: cardDealIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+
+      @keyframes cardDealIn {
+        0% { 
+          opacity: 0; 
+          transform: translateY(-100px) rotate(-15deg) scale(0.8); 
+        }
+        100% { 
+          opacity: 1; 
+          transform: translateY(0) rotate(0deg) scale(1); 
+        }
+      }
+
+      @keyframes splashIn {
+        0% { transform: scale(0.5) translateY(20px); opacity: 0; filter: blur(10px); }
+        50% { transform: scale(1.1) translateY(-5px); opacity: 1; filter: blur(0px); }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+      }
+
+      .animate-splash {
+        animation: splashIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      body {
+        background-color: #030712; /* bg-gray-950 */
+        color: white;
+        overflow: hidden;
+        height: 100vh;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+  }
+}
+</script>
+</head>
+  <body class="h-screen overflow-hidden">
+    <div id="root" class="h-full"></div>
+  </body>
+</html>
