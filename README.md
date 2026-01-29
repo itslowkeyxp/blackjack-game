@@ -1,6 +1,10 @@
 # Blackjack Pro 🃏
 
-A high-stakes, premium Blackjack experience built with React, Tailwind CSS, and Google Gemini AI. This application offers a professional casino-grade simulation with smooth animations, realistic sound effects, and intelligent strategic advice.
+Play here : https://blackjack-iota-blue.vercel.app/
+
+<img width="1209" height="713" alt="image" src="https://github.com/user-attachments/assets/bfcc6e58-9dfc-4bf7-88c6-cf0e9b5a3426" />
+
+A high-stakes, premium Blackjack experience built with React, Tailwind CSS. This application offers a professional casino-grade simulation with smooth animations, realistic sound effects, and intelligent strategic advice.
 
 ## ✨ Features
 
