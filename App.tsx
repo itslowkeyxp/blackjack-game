@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, GameStatus, Winner, PlayerStats } from './types.js';
 import { createDeck, shuffleDeck, calculateScore, isBlackjack } from './utils/gameLogic.js';
@@ -56,7 +55,15 @@ const App: React.FC = () => {
     setDeck(shuffleDeck(createDeck()));
   }, []);
 
-  const toggleMute = () => setIsMuted(!isMuted);
+  const toggleMute = () => {
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    // Explicitly update service and play confirmation if turning ON
+    soundService.setMute(nextMuted);
+    if (!nextMuted) {
+      soundService.play('push');
+    }
+  };
 
   const handleBet = (amount: number) => {
     if (isProcessing) return;
@@ -350,9 +357,10 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2">
           <button 
             onClick={toggleMute} 
-            className="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors"
+            className={`p-2 rounded-full transition-all flex items-center justify-center ${isMuted ? 'bg-red-500/20 text-red-400' : 'bg-gray-800 text-amber-500 hover:bg-gray-700'}`}
+            title={isMuted ? "Unmute" : "Mute"}
           >
-            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>
           <div className="bg-gray-800 px-3 py-1 rounded-lg border border-white/5 flex items-center gap-2">
             <Coins size={14} className="text-yellow-500" />
