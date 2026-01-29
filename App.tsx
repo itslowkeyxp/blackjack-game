@@ -6,7 +6,7 @@ import Chips from './components/Chips.js';
 import StatsPanel from './components/StatsPanel.js';
 import BetStack from './components/BetStack.js';
 import { soundService } from './services/soundService.js';
-import { Coins, RotateCcw, User, Briefcase, Trophy, AlertCircle, Scissors, Volume2, VolumeX } from 'lucide-react';
+import { Coins, RotateCcw, User, Briefcase, Trophy, AlertCircle, Scissors, Volume2, VolumeX, Github, Twitter } from 'lucide-react';
 
 const INITIAL_STATS: PlayerStats = {
   wins: 0,
@@ -56,12 +56,10 @@ const App: React.FC = () => {
   }, []);
 
   const toggleMute = () => {
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    // Explicitly update service and play confirmation if turning ON
-    soundService.setMute(nextMuted);
-    if (!nextMuted) {
-      soundService.play('push');
+    setIsMuted(prev => !prev);
+    // Confirmation sound if we are about to unmute
+    if (isMuted) {
+      setTimeout(() => soundService.play('push'), 50);
     }
   };
 
@@ -350,22 +348,35 @@ const App: React.FC = () => {
     <div className="h-screen bg-gray-950 flex flex-col items-center p-2 md:p-4 overflow-hidden">
       {/* Header Bar */}
       <div className="w-full max-w-5xl flex justify-between items-center mb-1">
-        <h1 className="font-serif text-lg md:text-2xl text-amber-500 flex items-center gap-2">
-          <Trophy size={18} className="text-amber-500" />
-          Blackjack Pro
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-serif text-lg md:text-2xl text-amber-500 flex items-center gap-2">
+            <Trophy size={18} className="text-amber-500" />
+            Blackjack Pro
+          </h1>
+          <div className="flex items-center gap-2 border-l border-white/10 pl-3">
+             <a href="https://github.com/itslowkeyxp/blackjack-game" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+               <Github size={16} />
+             </a>
+             <a href="https://x.com/itslowkeyxp" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-sky-400 transition-colors">
+               <Twitter size={16} />
+             </a>
+          </div>
+        </div>
+        
         <div className="flex items-center gap-2">
           <button 
             onClick={toggleMute} 
-            className={`p-2 rounded-full transition-all flex items-center justify-center ${isMuted ? 'bg-red-500/20 text-red-400' : 'bg-gray-800 text-amber-500 hover:bg-gray-700'}`}
+            className={`p-1.5 md:p-2 rounded-lg transition-all flex items-center justify-center border ${isMuted ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-gray-800 border-white/5 text-amber-500 hover:bg-gray-700'}`}
             title={isMuted ? "Unmute" : "Mute"}
           >
             {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>
+          
           <div className="bg-gray-800 px-3 py-1 rounded-lg border border-white/5 flex items-center gap-2">
             <Coins size={14} className="text-yellow-500" />
             <span className="font-bold text-white text-sm md:text-base">${balance}</span>
           </div>
+          
           {balance < 10 && status === GameStatus.BETTING && currentBet === 0 && (
             <button onClick={refillBalance} className="text-[10px] bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded font-bold transition-colors">
               REFILL
