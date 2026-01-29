@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, GameStatus, Winner, PlayerStats } from './types.js';
-import { createDeck, shuffleDeck, calculateScore, isBlackjack } from './utils/gameLogic.js';
+import { Card, GameStatus, Winner, PlayerStats, AdviceResponse } from './types.js';
+import { createDeck, shuffleDeck, calculateScore, isBlackjack, formatHandForAI } from './utils/gameLogic.js';
 import PlayingCard from './components/PlayingCard.js';
 import Chips from './components/Chips.js';
 import StatsPanel from './components/StatsPanel.js';
 import BetStack from './components/BetStack.js';
+import Advisor from './components/Advisor.js';
+import { getBlackjackAdvice } from './services/geminiService.js';
 import { soundService } from './services/soundService.js';
 import { Coins, RotateCcw, User, Briefcase, Trophy, AlertCircle, Scissors, Volume2, VolumeX } from 'lucide-react';
 
@@ -31,6 +33,10 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem('blackjack_muted') === 'true');
   const [roundResultMessage, setRoundResultMessage] = useState<string | null>(null);
+  
+  // AI Advice States
+  const [aiAdvice, setAiAdvice] = useState<AdviceResponse | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   const [stats, setStats] = useState<PlayerStats>(() => {
     const saved = localStorage.getItem('blackjack_career_stats');
@@ -62,9 +68,22 @@ const App: React.FC = () => {
     if (isProcessing) return;
     if (balance >= amount && status === GameStatus.BETTING) {
       setCurrentBet(prev => prev + amount);
-      setBalance(prev => prev - balance === amount ? 0 : balance - amount);
+      setBalance(prev => prev - amount);
       soundService.play('chip');
     }
+  };
+
+  const handleAskAI = async () => {
+    if (status !== GameStatus.PLAYER_TURN || isAiLoading) return;
+    
+    setIsAiLoading(true);
+    const pHand = formatHandForAI(playerHands[activeHandIndex]);
+    const dUp = formatHandForAI([dealerHand[0]]);
+    const pScore = calculateScore(playerHands[activeHandIndex]);
+    
+    const advice = await getBlackjackAdvice(pHand, dUp, pScore);
+    setAiAdvice(advice);
+    setIsAiLoading(false);
   };
 
   const finalizeRound = useCallback((dHand: Card[], pHands: Card[][]) => {
@@ -99,7 +118,6 @@ const App: React.FC = () => {
         result = Winner.DEALER;
         payout = 0;
       } else {
-        // Equal scores
         if (pBlackjack && !dBlackjack) {
           result = Winner.PLAYER;
           payout = Math.floor(bet * 2.5);
@@ -146,10 +164,10 @@ const App: React.FC = () => {
     setIsProcessing(false);
   }, [handBets]);
 
-  // Fix: changed finalPlayerHands type from Card[] to Card[][] to match its usage as an array of hands and fix the calculateScore parameter error
   const startDealerTurn = useCallback(async (finalPlayerHands: Card[][]) => {
     setStatus(GameStatus.DEALER_TURN);
     setIsProcessing(true);
+    setAiAdvice(null);
     
     const revealedDHand: Card[] = dealerHand.map(c => ({ ...c, isHidden: false }));
     setDealerHand(revealedDHand);
@@ -178,6 +196,7 @@ const App: React.FC = () => {
 
   const handleStand = useCallback((currentHands = playerHands) => {
     if (status !== GameStatus.PLAYER_TURN || isProcessing) return;
+    setAiAdvice(null);
 
     if (activeHandIndex < currentHands.length - 1) {
       setActiveHandIndex(prev => prev + 1);
@@ -191,6 +210,7 @@ const App: React.FC = () => {
     if (currentBet === 0 || status !== GameStatus.BETTING || isProcessing) return;
     
     setIsProcessing(true);
+    setAiAdvice(null);
     let currentDeck = [...deck];
     if (currentDeck.length < 15) {
       currentDeck = shuffleDeck(createDeck());
@@ -217,7 +237,6 @@ const App: React.FC = () => {
     setStats(prev => ({ ...prev, totalGames: prev.totalGames + 1 }));
 
     if (calculateScore(initialPlayerHand) === 21) {
-      // Delay to let cards animate in
       setTimeout(() => {
         const revealedDHand = initialDealerHand.map(c => ({ ...c, isHidden: false }));
         setDealerHand(revealedDHand);
@@ -232,6 +251,7 @@ const App: React.FC = () => {
     if (status !== GameStatus.PLAYER_TURN || isProcessing) return;
     
     setIsProcessing(true);
+    setAiAdvice(null);
     const currentDeck = [...deck];
     const newCard = currentDeck.pop()!;
     const newHands = [...playerHands];
@@ -259,6 +279,7 @@ const App: React.FC = () => {
     if (playerHands.length > 1 || currentHand.length !== 2 || balance < bet) return;
 
     setIsProcessing(true);
+    setAiAdvice(null);
     const currentDeck = [...deck];
     const card1_2 = currentDeck.pop()!;
     const card2_2 = currentDeck.pop()!;
@@ -288,6 +309,7 @@ const App: React.FC = () => {
     if (balance < bet || playerHands[activeHandIndex].length !== 2) return;
     
     setIsProcessing(true);
+    setAiAdvice(null);
     setBalance(prev => prev - bet);
     const newBets = [...handBets];
     newBets[activeHandIndex] = bet * 2;
@@ -318,6 +340,7 @@ const App: React.FC = () => {
     setCurrentBet(0);
     setHandWinners([]);
     setRoundResultMessage(null);
+    setAiAdvice(null);
     setStatus(GameStatus.BETTING);
     soundService.play('push');
   };
@@ -418,8 +441,8 @@ const App: React.FC = () => {
               </button>
             </div>
           ) : status === GameStatus.PLAYER_TURN ? (
-             <div className="text-white/20 font-black text-[10px] tracking-[0.2em] uppercase">
-               Decision Phase
+             <div className="w-48">
+               <Advisor loading={isAiLoading} advice={aiAdvice} onAsk={handleAskAI} disabled={isProcessing} />
              </div>
           ) : status === GameStatus.GAME_OVER && roundResultMessage ? (
             <div className="flex flex-col items-center animate-splash">

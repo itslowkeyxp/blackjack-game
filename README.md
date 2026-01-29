@@ -1,20 +1,48 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Blackjack Pro 🃏
 
-# Run and deploy your AI Studio app
+A high-stakes, premium Blackjack experience built with React, Tailwind CSS, and Google Gemini AI. This application offers a professional casino-grade simulation with smooth animations, realistic sound effects, and intelligent strategic advice.
 
-This contains everything you need to run your app locally.
+## ✨ Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1bCP0qGVYn6d0eRqI-pIFXTjI681oqLeL
+- **Professional Rules**: 
+  - Blackjack pays 3:2.
+  - Dealer stands on 17.
+  - Support for Splitting pairs and Doubling Down.
+- **AI Strategic Advisor**: Powered by **Gemini 3 Flash**, get real-time basic strategy advice based on your current hand and the dealer's up-card.
+- **Career Stats**: Persistent tracking of your wins, losses, win rate, net profit, and lifetime highest balance via `localStorage`.
+- **Immersive UI**: 
+  - Realistic 3D card flip animations.
+  - Dynamic bet stacks that visually grow as you wager.
+  - Haptic-inspired sound effects for chips and card dealing.
+- **Responsive Design**: Fully optimized for mobile, tablet, and desktop play.
 
-## Run Locally
+## 🛠 Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: React (ESM)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **AI Integration**: Google GenAI SDK (@google/genai)
+- **Audio**: Custom SoundService with pre-loaded assets.
 
+## 🕹 How to Play
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. **Place Your Bet**: Select chip values from the bottom tray to add to your stack.
+2. **Deal**: Hit the 'DEAL' button to start the round.
+3. **Decide**:
+   - **Hit**: Take another card.
+   - **Stand**: Keep your current total and end your turn.
+   - **Double**: Double your bet, take exactly one more card, and stand.
+   - **Split**: If you have a pair, split them into two separate hands (requires matching bet).
+4. **Consult the AI**: Stuck on a 16 vs a Dealer 7? Click the "Advice" button in the AI Strat panel for a calculated recommendation.
+5. **Outcome**: The game automatically handles dealer turns and payouts.
+
+## 📜 House Rules
+
+- **Deck**: Played with a single deck that reshuffles when fewer than 15 cards remain.
+- **Natural Blackjack**: An Ace and a 10-value card on the deal. Pays 1.5x the bet.
+- **Push**: If scores are equal, your bet is returned.
+- **Bust**: Going over 21 results in an immediate loss.
+
+---
+
+*Note: This is a simulation for entertainment purposes. No real currency is used or can be won.*

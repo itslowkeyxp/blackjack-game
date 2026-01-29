@@ -1,5 +1,5 @@
 
-import { Card, Rank, Suit } from '../types';
+import { Card, Rank, Suit } from '../types.js';
 
 export const createDeck = (): Card[] => {
   const suits = [Suit.HEARTS, Suit.DIAMONDS, Suit.CLUBS, Suit.SPADES];
